@@ -4,7 +4,7 @@ logger = Logger(__name__).log()
 
 
 
-def fetch_all(table_name,return_type,output_location="kft_query_output",partition_0=[]):
+def fetch_all(table_name,return_type,output_location="kft_query_output",partition_0=""):
     query = f"""SELECT 
                 *
                 FROM
