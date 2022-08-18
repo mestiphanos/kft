@@ -4,7 +4,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name='kft-dp',
+    name='kft_dp',
     version='0.0.1',
     author='',
     author_email='',
@@ -16,6 +16,6 @@ setuptools.setup(
         "Bug Tracker": "http://gitlab.kifiya.et/yabi/kft-data-lakehouse/issues"
     },
     license='MIT',
-    packages=['kft-dp'],
-    install_requires=['s3fs','boto3','pandas'],
+    packages=['kft_dp'],
+    install_requires=['s3fs','boto3','pandas','fsspec'],
 )
