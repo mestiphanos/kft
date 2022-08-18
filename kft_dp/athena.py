@@ -2,7 +2,7 @@ import pandas as pd
 import boto3
 # from scripts.logger import Logger
 import pickle
-from scripts.logger import Logger
+from kft_dp.logger import Logger
 
 logger = Logger(__name__).log()
 def get_var_char_values(d):
@@ -18,7 +18,7 @@ class AthenaQuery:
     """ 
     Run athena queries
     """
-    def __init__(self,params,region_name = 'eu-west-1',wait=True):
+    def __init__(self,params,region_name = 'us-east-1',wait=True):
         """
         Initialize parameters 
         """

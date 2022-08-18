@@ -2,7 +2,7 @@ import logging
 class Logger:
     """ A logger class for logging information on code"""
     def __init__(self,module_name,log_on = "both",level=logging.DEBUG,formats='%(asctime)s:%(levelname)s:%(message)s',) -> None:
-        self.filename = module_name + ".log"
+        self.filename = "logs"+module_name + ".log"
         self.level = level
         self.formats = formats
         self.log_on = log_on

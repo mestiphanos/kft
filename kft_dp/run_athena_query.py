@@ -1,8 +1,6 @@
 import time
-from scripts.athena import AthenaQuery
-from scripts.log_table import LogTable
-from scripts.lrw_cache_store import delete_from_cache_store
-from scripts.logger import Logger
+from kft_dp.athena import AthenaQuery
+from kft_dp.logger import Logger
 import pandas as pd
 logger = Logger(__name__).log()
 
@@ -10,8 +8,8 @@ class RunAthenaQuery:
     def __init__(self,query,return_type,**params):
         self.query = query
         self.return_type =return_type
-        self.region = 'eu-west-1'
-        self.database = params.get("database",'kft-staging')
+        self.region = 'us-east-1'
+        self.database = params.get("database",'credit_scoring')
         self.bucket = 'kft-lakehouse-staging'
         self.path = params.get("output_location")
         # self.dates = params.get("date",[])
@@ -99,18 +97,12 @@ class RunAthenaQuery:
                         logger.info(f"""Athena query completed successfully at {completion_date},Data successfully queried and stored in {location} for {self.table_name} table""")
 
                         if self.return_type == 'dataframe':
-                            # try:
                             aq_query_result = aq.get_result(location)
                             logger.info(f"Query result retrieved successfully from {location} for {self.table_name} table.")
                             return aq_query_result
                         elif self.return_type == 'location':
                             # print(location)
                             return location
-                            # except Exception as e:
-                            #     logger.exception(f"Failed to get the query result from {location} for {self.table_name} table..")
-            # round(response['QueryExecution']['Statistics']['DataScannedInBytes']/(1024*1024*1024)*5,4)
-                        ## Function to get output results and get the results
-                        # self.log.update_log_table(aq_query_details)
                         return
                     ## if status is neither failed or succeeded then sleep 
                     ## 5 secs and continue the loop 

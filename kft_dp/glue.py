@@ -1,4 +1,4 @@
-from scripts.logger import Logger
+from kft_dp.logger import Logger
 import boto3
 import time
 logger = Logger(__name__).log()
