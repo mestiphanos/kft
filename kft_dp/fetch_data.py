@@ -32,17 +32,25 @@ def return_partitions():
     return partitions
 
 def return_tables():
-    return 'merged_business_table'
+    return 'merged_business_data'
 
-def fetch_all(table_name,return_type='dataframe',output_location="kft_query_output",partition_0=""):
+def fetch(dry_run = False,table_name='merged_business_data',return_type='dataframe',output_location="kft_query_output",dataset_names=[]):
     query = f"""SELECT 
                 *
                 FROM
                 {table_name}
              """
-    logger.info(query)
-    if partition_0:
-        query += f"WHERE partition_0 = '{partition_0}'"
+    if dataset_names:
+        query += "WHERE "+(" or ").join([f"partition_0 = '{dataset_name}'" for dataset_name in dataset_names])
+    else:
+        logger.info("Insert data_set name:")
+        logger.info("Choose one/more of the following")
+        logger.info(return_partitions())
+        logger.info("example would be: fetch(dataset_name(['agro_Sheet2','agro_Sheet3'])")
+        exit()
+
+    if dry_run:
+        return query
     rq = RunAthenaQuery(query,return_type,**{'output_location':output_location})
     return rq.query_results()
 
