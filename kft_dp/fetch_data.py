@@ -132,6 +132,7 @@ def return_encoding_info(table_name):
     Returns the possible values
     of an encoded column
     """
+    pass
 
 def return_tables():
     return 'merged_business_data'
