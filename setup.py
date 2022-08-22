@@ -10,7 +10,7 @@ setuptools.setup(
     author_email='',
     description='Data pipeline for KFT',
     long_description='',
-    long_description_content_type="text/markdown"
+    long_description_content_type="text/markdown",
     url="https://gitlab.kifiya.et/yabi/kft-data-lakehouse",
     project_urls = {
         "Bug Tracker": "http://gitlab.kifiya.et/yabi/kft-data-lakehouse/issues"
