@@ -24,7 +24,7 @@ class Data:
             sheet_name_list = self.return_sheet_names()
         for s_name in sheet_name_list:
             print(s_name)
-            df = return_sheet_data(s_name)
+            df = self.return_sheet_data(s_name)
             df_sheets[s_name] = df
         return df_sheets
         
