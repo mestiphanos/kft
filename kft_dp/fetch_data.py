@@ -104,14 +104,41 @@ def return_columns(table_name='merged_business_data'):
         "ጠቅላላ የተፈጠ የስራ ዕድል.ቋሚ *.ወ",
         "ጠቅላላ የተፈጠ የስራ ዕድል.ቋሚ *.ሴ",
         "ጠቅላላ የተፈጠ የስራ ዕድል.ቋሚ *.ድ",
-        "የኢንዱስትሪው ዓይነት"]
+        "የኢንዱስትሪው ዓይነት"],
+        "merged_business_data_cleaned":
+        ['group_name', 
+        'mobile_number', 
+        'establishment_year', 
+        'starting_capital',
+       'current_capital', 
+       'total_employee', 
+       'dataset_name',
+       'business_documentation', 
+       'business_sector', 
+       'business_region',
+       'association_type', 
+       'level_Startup',
+       'level_Startup,\nGrowing,\nGraduated',
+       'initial_source_of_capital_Own Family', 
+       'woreda_new_1', 
+       'woreda_new_2',
+       'woreda_new_3', 
+       'woreda_new_4']
     }
     return table_info[table_name]
+
+def return_encoding_info(table_name):
+    """
+    Returns the possible values
+    of an encoded column
+    """
 
 def return_tables():
     return 'merged_business_data'
 
-def fetch(dry_run = False,table_name='merged_business_data',cols = [],return_type='dataframe',output_location="kft_query_output",dataset_names=[]):
+def fetch(dry_run = False,cleaned=False,table_name='merged_business_data',cols = [],return_type='dataframe',output_location="kft_query_output",dataset_names=[]):
+    if cleaned:
+        table_name += "_cleaned"
     logger.info("If you want to fetch cols from the table, you can choose from the following:")
     logger.info(return_columns(table_name))
     logger.info("")
@@ -132,5 +159,7 @@ def fetch(dry_run = False,table_name='merged_business_data',cols = [],return_typ
     if dry_run:
         return query
     rq = RunAthenaQuery(query,return_type,**{'output_location':output_location})
-    return rq.query_results()
+    df = rq.query_results()
+
+    return df
 
