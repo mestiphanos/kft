@@ -9,7 +9,7 @@ class Label:
         pass
     
     def label_encoder(self, df: DataFrame, col: str):
-        """categorical columns for a list of columns
+        """categorical column for a single column
         Parameters
         ----------
         df: Pandas Dataframe
@@ -39,7 +39,9 @@ class Label:
         return df
     
     def calculate_vif(data):
-        """Function to calculate VIF"""
+        """Function to calculate VIF
+        used if the one hot encoding is in a dummy varible trap or not
+        if the value is above >5 it is and need to drop one column"""
         vif_df = pd.DataFrame(columns = ['Var', 'Vif'])
         x_var_names = data.columns
         for i in range(0, x_var_names.shape[0]):
@@ -51,7 +53,7 @@ class Label:
         return vif_df.sort_values(by = 'Vif', axis = 0, ascending=False, inplace=False)
     
     def label_encode(df, columns):
-        """Label encode the target variable.
+        """Label encode the target variable fol a column of list.
         Parameters
         ----------
         df: Pandas Dataframe
@@ -126,60 +128,25 @@ class Label:
             df.at[index,f'{col}_4'] = int(li[3])
         return df
     
-    def remove_spaces(self, df, col):
-        """remove trailing space from both sides"""
-        df[col] = df[col].str.strip()
-        return df
-    
-    def normalize_char_level_missmatch(self, input_token):
-        rep1=re.sub('[ሃኅኃሐሓኻ]','ሀ',input_token)
-        rep2=re.sub('[ሑኁዅ]','ሁ',rep1)
-        rep3=re.sub('[ኂሒኺ]','ሂ',rep2)
-        rep4=re.sub('[ኌሔዄ]','ሄ',rep3)
-        rep5=re.sub('[ሕኅ]','ህ',rep4)
-        rep6=re.sub('[ኆሖኾ]','ሆ',rep5)
-        rep7=re.sub('[ሠ]','ሰ',rep6)
-        rep8=re.sub('[ሡ]','ሱ',rep7)
-        rep9=re.sub('[ሢ]','ሲ',rep8)
-        rep10=re.sub('[ሣ]','ሳ',rep9)
-        rep11=re.sub('[ሤ]','ሴ',rep10)
-        rep12=re.sub('[ሥ]','ስ',rep11)
-        rep13=re.sub('[ሦ]','ሶ',rep12)
-        rep14=re.sub('[ዓኣዐ]','አ',rep13)
-        rep15=re.sub('[ዑ]','ኡ',rep14)
-        rep16=re.sub('[ዒ]','ኢ',rep15)
-        rep17=re.sub('[ዔ]','ኤ',rep16)
-        rep18=re.sub('[ዕ]','እ',rep17)
-        rep19=re.sub('[ዖ]','ኦ',rep18)
-        rep20=re.sub('[ጸ]','ፀ',rep19)
-        rep21=re.sub('[ጹ]','ፁ',rep20)
-        rep22=re.sub('[ጺ]','ፂ',rep21)
-        rep23=re.sub('[ጻ]','ፃ',rep22)
-        rep24=re.sub('[ጼ]','ፄ',rep23)
-        rep25=re.sub('[ጽ]','ፅ',rep24)
-        rep26=re.sub('[ጾ]','ፆ',rep25)
-        #Normalizing words with Labialized Amharic characters such as በልቱዋል or  በልቱአል to  በልቷል  
-        rep27=re.sub('(ሉ[ዋአ])','ሏ',rep26)
-        rep28=re.sub('(ሙ[ዋአ])','ሟ',rep27)
-        rep29=re.sub('(ቱ[ዋአ])','ቷ',rep28)
-        rep30=re.sub('(ሩ[ዋአ])','ሯ',rep29)
-        rep31=re.sub('(ሱ[ዋአ])','ሷ',rep30)
-        rep32=re.sub('(ሹ[ዋአ])','ሿ',rep31)
-        rep33=re.sub('(ቁ[ዋአ])','ቋ',rep32)
-        rep34=re.sub('(ቡ[ዋአ])','ቧ',rep33)
-        rep35=re.sub('(ቹ[ዋአ])','ቿ',rep34)
-        rep36=re.sub('(ሁ[ዋአ])','ኋ',rep35)
-        rep37=re.sub('(ኑ[ዋአ])','ኗ',rep36)
-        rep38=re.sub('(ኙ[ዋአ])','ኟ',rep37)
-        rep39=re.sub('(ኩ[ዋአ])','ኳ',rep38)
-        rep40=re.sub('(ዙ[ዋአ])','ዟ',rep39)
-        rep41=re.sub('(ጉ[ዋአ])','ጓ',rep40)
-        rep42=re.sub('(ደ[ዋአ])','ዷ',rep41)
-        rep43=re.sub('(ጡ[ዋአ])','ጧ',rep42)
-        rep44=re.sub('(ጩ[ዋአ])','ጯ',rep43)
-        rep45=re.sub('(ጹ[ዋአ])','ጿ',rep44)
-        rep46=re.sub('(ፉ[ዋአ])','ፏ',rep45)
-        rep47=re.sub('[ቊ]','ቁ',rep46) #ቁ can be written as ቊ
-        rep48=re.sub('[ኵ]','ኩ',rep47) #ኩ can be also written as ኵ  
+    def literal_translation(self, text: list, di: dict):
+        """literal translation from amaharic to english 
+        Parameters
+        ----------
+        text: list 
+            list of text needed to be translated
+        di: dictionary ( the mapping between the amahric fidel and english characters)
+        Returns
+        -------
+        The function returns a list of translated text 
+        """
         
-        return rep48
+        list_text = []
+        for j in range(len(text)):
+            ltext = list(text[j])
+            for index, i in enumerate(ltext):
+                val = di.get(i)
+                if(val):
+                    ltext[index] = val
+                a = "".join(ltext)
+            list_text.append(a)
+        return list_text
