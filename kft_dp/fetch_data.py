@@ -3,8 +3,9 @@ from kft_dp.logger import Logger
 logger = Logger(__name__).log()
 
 
-def return_partitions():
-    partitions = ['agro_Sheet2',
+def return_partitions(table_name):
+    partitions = 
+ {'business_data' :['agro_Sheet2',
  'agro_Sheet3',
  'agro_agro',
  'agro_መጠጥ',
@@ -28,8 +29,12 @@ def return_partitions():
  'mule_የካ',
  'mule_ጉለሌ',
  'mule_addisketema',
- 'minilik']
-    return partitions
+ 'minilik'],
+ 'credit_data':
+ ['credit_data',
+  'credit_scored_risk_data']}
+
+    return partitions[table_name]
 
 def return_columns(table_name='merged_business_data'):
     table_info = {
@@ -104,7 +109,80 @@ def return_columns(table_name='merged_business_data'):
         "ጠቅላላ የተፈጠ የስራ ዕድል.ቋሚ *.ወ",
         "ጠቅላላ የተፈጠ የስራ ዕድል.ቋሚ *.ሴ",
         "ጠቅላላ የተፈጠ የስራ ዕድል.ቋሚ *.ድ",
-        "የኢንዱስትሪው ዓይነት"]
+        "የኢንዱስትሪው ዓይነት"],
+        "credit_data":
+        ["customer number_1",
+        "number of loans accessed in the last 6 months",
+        "number of loans ever accessed",
+        "number of loans ever defaulted",
+        "has a non-performing loan (y/n)(0 means no)",
+        "current loan balance",
+        "number of missed loan installments last 6 months",
+        "number of loans accessed in the last 12 months",
+        "number of missed loan installments last 12 months",
+        "number of loans accessed in the last 3 months",
+        "number of missed loan installments last 3 months",
+        "unnamed: 0",
+        "acid",
+        "customer number_2",
+        "12 month total inflows",
+        "12 month average inflows",
+        "12 month total outflows",
+        "12 month average outflows",
+        "count of unique sources of inflows",
+        "count of unique sources of outflows",
+        "average minimum12-month inflow",
+        "average maximum 12-month inflow",
+        "average 12-monthly retained balance",
+        "average 12-monthly  count of transations",
+        "account id",
+        "customer number",
+        "weekly total inflow",
+        "average weekly inflow",
+        "weekly total outflow",
+        "average weekly outflow",
+        "weekly number of source of inflow",
+        "weekly number of source of outflow",
+        "avarage weekly inflow",
+        "average weekly outflow_1",
+        "average weekly retained balance",
+        "average weekly count of transaction",
+        "monthly total inflow",
+        "average monthly inflow",
+        "monthly total outflow",
+        "average monthly outflow",
+        "monthly number of source of inflow",
+        "monthly number of source of outflow",
+        "average minimum monthly inflow",
+        "average maximum monthly inflow",
+        "average monthly retained balance",
+        "average monthly count of transaction",
+        "three month total inflow",
+        "average three month inflow",
+        "three month total outflow",
+        "average tree month outflow",
+        "three month number of source of inflow",
+        "three month number of source of outflow",
+        "average minimum three month inflow",
+        "average maximum three month inflow",
+        "average three month retained balance",
+        "average three moth count of transaction",
+        "six month total inflow",
+        "average six month inflow",
+        "six month total inflow.1",
+        "average six month outflow",
+        "six month number of source of inflow",
+        "six month number of source of outflow",
+        "average minimum six month inflow",
+        "average maximum six month inflow",
+        "average six month retained balance",
+        "average six month count of transaction",
+        "number of mobile",
+        "number of normal accounts",
+        "fixed deposit accounts",
+        "current deposit account",
+        "gender",
+        "registered customer"]
     }
     return table_info[table_name]
 
