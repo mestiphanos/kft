@@ -1,4 +1,5 @@
 from kft_dp.glue import Glue
+import json
 
 class SchemaRegistry(Glue):  
     """
