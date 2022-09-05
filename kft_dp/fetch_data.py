@@ -60,12 +60,13 @@ class FetchData:
         """
         pass
 
-    def run(self,cols = [],dataset_names=[]):
+    def run(self,info=False,cols = [],dataset_names=[]):
         if self.cleaned:
             self.table_name += "_cleaned"
-        logger.info("If you want to fetch cols from the table, you can choose from the following:")
-        logger.info(self.columns)
-        logger.info("")
+        if info:
+            logger.info("If you want to fetch cols from the table, you can choose from the following:")
+            logger.info(self.column_info)
+            logger.info("")
         query = "SELECT "
         selected_cols = "*"
         if cols:
@@ -75,13 +76,14 @@ class FetchData:
             query += " WHERE "+(" or ").join([f"partition_0 = '{dataset_name}'" for dataset_name in dataset_names])
         else:
             if self.partitions:
-                logger.info("You can choose one/more of the following partitions")
-                logger.info(self.partitions)
-                logger.info("example would be: fetch(dataset_name(['agro_Sheet2','agro_Sheet3'])")
+                if info:
+                    logger.info("You can choose one/more of the following partitions")
+                    logger.info(self.partitions)
+                    logger.info("example would be: fetch(dataset_name(['agro_Sheet2','agro_Sheet3'])")
 
         if self.dry_run:
             return query
-        rq = RunAthenaQuery(query,self.return_type,**{'output_location':self.output_location,'database':self.database})
+        rq = RunAthenaQuery(query,self.return_type,**{'output_location':self.output_location,'database':self.database_name})
         df = rq.query_results()
 
         return df
