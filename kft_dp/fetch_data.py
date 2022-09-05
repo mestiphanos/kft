@@ -4,15 +4,17 @@ from kft_dp.table_info import *
 logger = Logger(__name__).log()
 
 class FetchData:
-    def __init__(self,dry_run = False,cleaned=False,table_name='mse_data'):
+    def __init__(self,dry_run = False,cleaned=False,table_name='mse_data',database_name='credit_scoring'):
         self.dry_run = dry_run
         self.cleaned = cleaned
         self.table_name = table_name
+        self.database_name = database_name
         self.return_type ='dataframe'
         self.output_location = "kft_query_output"
         self.return_partition_info()
         self.return_columns()
         self.return_table_info()
+        
 
         try:
             self.partitions = self.return_partition_info()
@@ -21,16 +23,16 @@ class FetchData:
         # self.columns = self.return_column_info()
 
     def return_columns(self):
-        self.column_info = runquery_decorator(argument_passed = self.table_name,query_generator=return_col_info)
+        self.column_info = runquery_decorator(database_name= self.database_name,argument_passed = self.table_name,query_generator=return_col_info)
         
     def return_partition_info(self):
-        self.partition_info = runquery_decorator(argument_passed = self.table_name,query_generator=return_partition_info)
+        self.partition_info = runquery_decorator(database_name= self.database_name,argument_passed = self.table_name,query_generator=return_partition_info)
         if not self.partition_info.empty:
             logger.info(f"The table {self.table_name} is not partitioned")
         
     def return_table_info(self):
-        self.tables = runquery_decorator(query_generator=return_tables)
-        self.table_info = runquery_decorator(query_generator=return_all_cols_from_all_tables)
+        self.tables = runquery_decorator(database_name= self.database_name,argument_passed = self.database_name,query_generator=return_tables)
+        self.table_info = runquery_decorator(database_name= self.database_name,argument_passed = self.database_name,query_generator=return_all_cols_from_all_tables)
 
     def get_detail_info_tables(self):
         logger.info("****************************************************")
@@ -79,7 +81,7 @@ class FetchData:
 
         if self.dry_run:
             return query
-        rq = RunAthenaQuery(query,self.return_type,**{'output_location':self.output_location})
+        rq = RunAthenaQuery(query,self.return_type,**{'output_location':self.output_location,'database':self.database})
         df = rq.query_results()
 
         return df
