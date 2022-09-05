@@ -1,5 +1,6 @@
 from kft_dp.run_athena_query import *
 from kft_dp.logger import Logger
+from kft_dp.table_info import *
 logger = Logger(__name__).log()
 
 class FetchData:
@@ -11,268 +12,42 @@ class FetchData:
         self.output_location = "kft_query_output"
         self.return_partition_info()
         self.return_columns()
+        self.return_table_info()
 
         try:
-            self.partitions = self.partition_info[self.table_name]
+            self.partitions = self.return_partition_info()
         except:
             self.partitions = []
-        self.columns = self.column_info[self.table_name]
-
-
-    def return_partition_info(self):
-        self.partition_info = {'merged_business_data':
-                        ['agro_Sheet2',
-                        'agro_Sheet3',
-                        'agro_agro',
-                        'agro_መጠጥ',
-                        'agro_እንሰሳት',
-                        'agro_እጸዋት',
-                        'mule_Garment',
-                        'mule_Textile',
-                        'mule_ቆዳ',
-                        'mule_የጨ',
-                        'mule_sheet2',
-                        '42_industry',
-                        'mule_ልደታ',
-                        'mule_ቂርቆስ',
-                        'mule_ቃሊተ1',
-                        'mule_ቃሊቲ',
-                        'mule_Arada',
-                        'mule_Sheet5',
-                        'mule_ቦሌ',
-                        'mule_ንፋስ ስልክ',
-                        'mule_ኮልፌ',
-                        'mule_የካ',
-                        'mule_ጉለሌ',
-                        'mule_addisketema',
-                        'minilik']}
-        # if table_name in list(partitions.keys()):
-        #     return partitions[table_name]
-        # else:
-        #     return [] 
-        
+        # self.columns = self.return_column_info()
 
     def return_columns(self):
-        self.column_info = {
-            "merged_business_data": 
-            ["index",
-            "dataset_name",
-            "ምርመራ",
-            "ስልክ ቁጥር",
-            "ተ.ቁ",
-            "ተቋሙ የሚጠቀም ግብዓት.አይነት",
-            "ተቋሙ የሚጠቀም ግብዓት.አይነት.1",
-            "ተቋሙ የሚጠቀም ግብዓት.የሀገር ውስጥ",
-            "ተቋሙ የሚጠቀም ግብዓት.የውጭ ሀገር",
-            "ተቋሙ የሚጠቀምበት ማሽን.ብዛት",
-            "ተቋሙ የሚጠቀምበት ማሽን.አይነት",
-            "ንዑስ ዘርፍ",
-            "ዋና ዘርፍ",
-            "የመስሪያ ቦታ ስፋት በካ.ሜ",
-            "የሚያመርቱት የምርት መጠን (በዓመት)",
-            "የሚያመርቱት የምርት ዓይነት",
-            "የሚያመርቱት የምርት ዓይነት.1",
-            "የሚፈልጉት የድጋፍ አይነት",
-            "የማምረቻ ቦታ ሁኔታ.በኪራይ",
-            "የማምረቻ ቦታ ሁኔታ.በግል",
-            "የማምረቻ ቦታ ሁኔታ.ፓርክ",
-            "የማምረቻ ቦታ ሁኔታ.ፓርክ.1",
-            "የተመሰረተበት ዓ.ም",
-            "የተቋሙ አድራሻ.ልዩ ቦታ",
-            "የተቋሙ አድራሻ.ክ/ከተማ",
-            "የተቋሙ አድራሻ.ወረዳ",
-            "የተፈጠረ የስራ ዕድል.ቋሚ.ሴ",
-            "የተፈጠረ የስራ ዕድል.ቋሚ.ወ",
-            "የተፈጠረ የስራ ዕድል.ቋሚ.ድ",
-            "የተፈጠረ የስራ ዕድል.ጊዜያዊ.ሴ",
-            "የተፈጠረ የስራ ዕድል.ጊዜያዊ.ወ",
-            "የተፈጠረ የስራ ዕድል.ጊዜያዊ.ድ",
-            "የአደረጃጀት ዓይነት",
-            "የኢንዱስትሪ ስም",
-            "የካፒታል ሁኔታ.መነሻ",
-            "የካፒታል ሁኔታ.አሁን ያለው",
-            "የድርጅቱ አባላት ሁኔታ.ሲቋቋም.ሴ",
-            "የድርጅቱ አባላት ሁኔታ.ሲቋቋም.ወ",
-            "የድርጅቱ አባላት ሁኔታ.ሲቋቋም.ድ",
-            "የድርጅቱ አባላት ሁኔታ.አሁን.ሴ",
-            "የድርጅቱ አባላት ሁኔታ.አሁን.ወ",
-            "የድርጅቱ አባላት ሁኔታ.አሁን.ድ",
-            "የድርጅት ባለቤት መረጃ.ስም",
-            "የድርጅት ባለቤት መረጃ.ዕድሜ",
-            "የድርጅት ባለቤት መረጃ.ፆታ",
-            "የገበያ መዳረሻ.የሀገር ውስጥ",
-            "የገበያ መዳረሻ.የውጭ ሀገር",
-            "የገብያ ሁኔታ.በሀገር ውስጥ",
-            "የገብያ ሁኔታ.በውጭ ሀገር",
-            "የድርጅት መረጃ.ክልል",
-            "የድርጅት መረጃ.ዞን/ክፍለ ከተማ",
-            "የድርጅት መረጃ.ወረዳ",
-            "የድርጅት መረጃ.ከተማ",
-            "የድርጅት መረጃ.ልዩ ቦታ",
-            "ፍቃድ ያገኘበት ዓ.ም",
-            "የተሰማራበት የስራ መስክ",
-            "የኢንዱስትሪው ዓይነት (በትርጓሜ)",
-            "የግብር ከፋይ መለያ ቁጥር",
-            "የአባላት (ባለቤት) ብዛት.ወ",
-            "የአባላት (ባለቤት) ብዛት.ሴ",
-            "የአባላት (ባለቤት) ብዛት.ድ",
-            "ከአባላት (ባለቤት) ውጭ የተፈጠረ የስራ ዕድል.ቋሚ.ወ",
-            "ከአባላት (ባለቤት) ውጭ የተፈጠረ የስራ ዕድል.ቋሚ.ሴ",
-            "ከአባላት (ባለቤት) ውጭ የተፈጠረ የስራ ዕድል.ቋሚ.ድ",
-            "ከአባላት (ባለቤት) ውጭ የተፈጠረ የስራ ዕድል.ጊዜያዊ.ወ",
-            "ከአባላት (ባለቤት) ውጭ የተፈጠረ የስራ ዕድል.ጊዜያዊ.ሴ",
-            "ከአባላት (ባለቤት) ውጭ የተፈጠረ የስራ ዕድል.ጊዜያዊ.ድ",
-            "ጠቅላላ የተፈጠ የስራ ዕድል.ቋሚ *.ወ",
-            "ጠቅላላ የተፈጠ የስራ ዕድል.ቋሚ *.ሴ",
-            "ጠቅላላ የተፈጠ የስራ ዕድል.ቋሚ *.ድ",
-            "የኢንዱስትሪው ዓይነት"],
-            "merged_business_data_cleaned":
-            ['group_name', 
-            'mobile_number', 
-            'establishment_year', 
-            'starting_capital',
-            'current_capital', 
-            'total_employee', 
-            'dataset_name',
-            'business_documentation', 
-            'business_sector', 
-            'business_region',
-            'association_type', 
-            'level_Startup',
-            'level_Startup,\nGrowing,\nGraduated',
-            'initial_source_of_capital_Own Family', 
-            'woreda_new_1', 
-            'woreda_new_2',
-            'woreda_new_3', 
-            'woreda_new_4'],
-        'mse_data':
-            ['application_id',
-            'referenceNumber',
-            'registrationDate',
-            'applicant_status',
-            'requestId',
-            'registrationId',
-            'firstName',
-            'middleName',
-            'lastName',
-            'fullName',
-            'gender',
-            'dateOfBirth',
-            'dateOfBirthETH',
-            'maritalStatus',
-            'noOfDependents',
-            'residenceAddressRegion',
-            'residenceAddressSubCity',
-            'residenceAddressWoreda',
-            'phoneNumber',
-            'email',
-            'kebeleIdNo',
-            'disability',
-            'enterpriseName',
-            'enterpriseAddressRegion',
-            'enterpriseAddressSubCity',
-            'enterpriseAddressWoreda',
-            'enterpriseSpecificLocation',
-            'typeOfEnterprise',
-            'sizeOfEnterprise',
-            'womenOwnerShip',
-            'formal',
-            'businessLicenceNumber',
-            'taxIdentificationNumber',
-            'hasTaxClearance',
-            'operationalPremise',
-            'enterPriseSector',
-            'YearsInOperation',
-            'operationalPremise.1',
-            'HaveYouRecivedCOVID_RelatedSupport',
-            'ExperianceWithMFIBankLoan',
-            'NoOfActiveEmployeeAsOfJanuary',
-            'NoOfActiveEmployeeCurrent',
-            'youthEmployeePercentageAsOfJanuary',
-            'youthEmployeePercentageAsOfCurrent',
-            'womenEmployeePercentageAsOfJanuary',
-            'womeEmployeePercentageAsOfCurrent',
-            'permanetEmployeePercentageAsOfJanuary',
-            'permanetEmployeePercentageAsOfCurrent',
-            'averageMonthlyRevenuPriorToCovid',
-            'estimatedLossDuringCovid',
-            'totalSalaryExpenceAtJanuary',
-            'totalSalaryExpenceAtJuly',
-            'totalAssetSize',
-            'copingPlanNextThreeMonth',
-            'copingPlanNextSixMonth',
-            'ifYouGetCreditCanYouStatyInBusiness',
-            'canYouMatch15PercentOfCredit',
-            'dataset_name'],
-        'mse_data_cleaned':
-        ["application_id",                   	                    
-            "referencenumber",                  	                    
-            "registrationdate",                	                    
-            "applicant_status",               	                    
-            "requestid",                	                    
-            "registrationid",                 	                    
-            "firstname",                   	                    
-            "middlename",                      	                    
-            "lastname",                      	                    
-            "fullname",                        	                    
-            "gender",                       	                    
-            "dateofbirth",                    	                    
-            "dateofbirtheth",               	                    
-            "maritalstatus",                  	                    
-            "noofdependents",              	                    
-            "residenceaddressregion",           	                    
-            "residenceaddresssubcity",            	                    
-            "residenceaddressworeda",
-            "phonenumber",       	
-            "email",               	
-            "kebeleidno",         	
-            "disability",        	
-            "enterprisename",     	
-            "enterpriseaddressregion",
-            "enterpriseaddresssubcity",
-            "enterpriseaddressworeda",
-            "enterprisespecificlocation",
-            "typeofenterprise",
-            "sizeofenterprise",
-            "womenownership",    
-            "formal",          
-            "businesslicencenumber",
-            "taxidentificationnumber",             	                    
-            "hastaxclearance",  
-            "operationalpremise",
-            "enterprisesector",  
-            "yearsinoperation",  
-            "operationalpremise.1",
-            "haveyourecivedcovid_relatedsupport",          	                    
-            "experiancewithmfibankloan",          	                    
-            "noofactiveemployeeasofjanuary",             	                    
-            "noofactiveemployeecurrent",              	                    
-            "youthemployeepercentageasofjanuary",
-            "youthemployeepercentageasofcurrent",
-            "womenemployeepercentageasofjanuary",
-            "womeemployeepercentageasofcurrent",
-            "permanetemployeepercentageasofjanuary",
-            "permanetemployeepercentageasofcurrent",
-            "averagemonthlyrevenupriortocovid",            	                    
-            "estimatedlossduringcovid",            	                    
-            "totalsalaryexpenceatjanuary",             	                    
-            "totalsalaryexpenceatjuly",            	                    
-            "totalassetsize",            	                    
-            "copingplannextthreemonth",             	                    
-            "copingplannextsixmonth",            	                    
-            "ifyougetcreditcanyoustatyinbusiness",              	                    
-            "canyoumatch15percentofcredit"]
-        }
-        # return table_info[table_name]
+        self.column_info = runquery_decorator(argument_passed = self.table_name,query_generator=return_col_info)
+        
+    def return_partition_info(self):
+        self.partition_info = runquery_decorator(argument_passed = self.table_name,query_generator=return_partition_info)
+        if not self.partition_info.empty:
+            logger.info(f"The table {self.table_name} is not partitioned")
+        
+    def return_table_info(self):
+        self.tables = runquery_decorator(query_generator=return_tables)
+        self.table_info = runquery_decorator(query_generator=return_all_cols_from_all_tables)
 
     def get_detail_info_tables(self):
         logger.info("****************************************************")
-        logger.info("Partition Information for tables available")
-        logger.info(self.partition_info)
+        logger.info("Information about tables available")
+        logger.info("Available tables")
+        logger.info(self.tables)
+        logger.info("----------------------------------------------------------")
+        return self.table_info
+        
+    def get_detail_info_table(self):
+        logger.info("**********************************************************")
+        logger.info(f"Column Information for the {self.table_name}")
+        logger.info(self.column_info)
         logger.info("----------------------------------------------------------")
         logger.info("**********************************************************")
-        logger.info("Column Information for the tables available")
-        logger.info(self.column_info)
+        logger.info(f"Partition Information for the {self.table_name}")
+        logger.info(self.partition_info)
         logger.info("----------------------------------------------------------")
         logger.info("")
 
@@ -282,9 +57,6 @@ class FetchData:
         of an encoded column
         """
         pass
-
-    def return_tables(self):
-        self.tables = ['merged_business_data']
 
     def run(self,cols = [],dataset_names=[]):
         if self.cleaned:
