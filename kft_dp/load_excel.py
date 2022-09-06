@@ -1,27 +1,5 @@
-def return_sheet_names(filepath):
-        """
-        Get the sheet names
-        found in the provided
-        excel file
-        """
-        excel = pd.ExcelFile(filepath,engine='openpyxl')
-        sheet_names = excel.sheet_names
-        return sheet_names
-    
-def return_sheet_data(filepath,sheet_name,header=None):
-    return pd.read_excel(filepath,engine='openpyxl',sheet_name=sheet_name,header=header)
-
-def write_file(self,df,filelocation = "",filename="",file_format='.parquet'):
-        """
-        Write a dataframe to
-        the specified format
-        """
-        if not filename:
-            filename = self.filename
-        if not filelocation:
-            filelocation= self.filelocation
-        df.to_csv(f"{self.filelocation}/{self.filename}{file_format}",index=False)
-        print(f"successfully saved {formatted_file}")
+from kft_dp.helper_methods import *
+from kft_dp.merge_multiple_headers import MergeMultipleHeaders
 
 class LoadExcelFile:
     def __init_(self,merged):
