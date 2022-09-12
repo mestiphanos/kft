@@ -1,0 +1,4 @@
+[core]
+    remote = feature_store
+['remote "feature_store"']
+    url = s3://kft-lakehouse-staging/feature_store
