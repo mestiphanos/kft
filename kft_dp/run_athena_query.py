@@ -5,7 +5,7 @@ import pandas as pd
 logger = Logger(__name__).log()
 
 class RunAthenaQuery:
-    def __init__(self,query,return_type,**params):
+    def __init__(self,query,return_type,dry_run=False,**params):
         self.query = query
         self.return_type =return_type
         self.region = 'us-east-1'
@@ -16,6 +16,7 @@ class RunAthenaQuery:
         # self.template_name = params.get("template_name","")
         self.table_name = params.get("table_name","")
         self.initialize_athena_params()
+        self.dry_run = dry_run
 
     def initialize_athena_params(self):
         """
@@ -41,13 +42,18 @@ class RunAthenaQuery:
         ## iterations 360 means 30 mins
         try:
             aq = AthenaQuery(self.params)
-            logger.info("Successfully created athena query class")
+            if self.dry_run:
+                logger.info("Successfully created athena query class")
         except Exception as e:
-            logger.exception("Failed to create athena query class.")
+            if self.dry_run:
+                logger.exception("Failed to create athena query class.")
+            else:
+                raise Exception("Execution Failed")
 
         try:
-            aq_query_id = aq.start_query(self.params['query'])    
-            logger.info(f"Athena query with query id{aq_query_id['QueryExecutionId']}started to run.")
+            aq_query_id = aq.start_query(self.params['query'])  
+            if self.dry_run:
+                logger.info(f"Athena query with query id{aq_query_id['QueryExecutionId']}started to run.")
                 ## if you choose not to wait return execution
         ## query id
             if not wait:
@@ -65,20 +71,27 @@ class RunAthenaQuery:
                     aq_query_details = aq.get_query_information(aq_query_id)
                     try:
                         status = aq_query_details['QueryExecution']['Status']['State']
-                        logger.info(f"Status of started query is {status}")
-                        try:
-                            logger.info(f"Data scanned in Mb is {float(round(aq_query_details['QueryExecution']['Statistics']['DataScannedInBytes']/(1024*1024), 6))}")
-                            logger.info(f"Time taken in seconds is {float(round(aq_query_details['QueryExecution']['Statistics']['TotalExecutionTimeInMillis']/1000,4))}")
-                        except:
-                            logger.info(f"")
+                        if self.dry_run:
+                            logger.info(f"Status of started query is {status}")
+                            try:
+                                logger.info(f"Data scanned in Mb is {float(round(aq_query_details['QueryExecution']['Statistics']['DataScannedInBytes']/(1024*1024), 6))}")
+                                logger.info(f"Time taken in seconds is {float(round(aq_query_details['QueryExecution']['Statistics']['TotalExecutionTimeInMillis']/1000,4))}")
+                            except:
+                                logger.info(f"")
                     except Exception as e:
-                        logger.exception(f"Failed to get the status of started query.")
+                        if self.dry_run:
+                            logger.exception(f"Failed to get the status of started query.")
+                        else:
+                            raise Exception("Execution Failed")
                     ## if status is failed stop the loop and return
                     ## why it failed
                     if (status == 'FAILED') or (status == 'CANCELLED') :
                         failure_reason = aq_query_details['QueryExecution']['Status']['StateChangeReason']
-                        logger.info(f"query failed for {self.table_name}")
-                        logger.error(failure_reason)
+                        if self.dry_run:
+                            logger.info(f"query failed for {self.table_name}")
+                            logger.error(failure_reason)
+                        # else:
+                        #     raise Exception("Execution Failed")
                         # self.log.update_log_table(aq_query_details)
                         if "CREATE" in self.params['query']:
                             delete_from_cache_store(self.table_name)
@@ -92,9 +105,11 @@ class RunAthenaQuery:
                     elif status == 'SUCCEEDED':
                         location = aq_query_details['QueryExecution']['ResultConfiguration']['OutputLocation']
                         completion_date = aq_query_details['QueryExecution']['Status']['CompletionDateTime']
-                        print("data_scanned in kb",round(aq_query_details['QueryExecution']['Statistics']['DataScannedInBytes']/1024, 4))
-                        print("time taken in second",round(aq_query_details['QueryExecution']['Statistics']['TotalExecutionTimeInMillis']/1000,5))
-                        logger.info(f"""Athena query completed successfully at {completion_date},Data successfully queried and stored in {location} for {self.table_name} table""")
+                        if self.dry_run:
+                            logger.info(f"data_scanned in kb {round(aq_query_details['QueryExecution']['Statistics']['DataScannedInBytes']/1024, 4)}")
+                            logger.info(f"time taken in second {round(aq_query_details['QueryExecution']['Statistics']['TotalExecutionTimeInMillis']/1000,5)}")
+                            logger.info(f"""Athena query completed successfully at {completion_date},Data successfully queried and stored in {location} for {self.table_name} table""")
+                                                        
 
                         if self.return_type == 'dataframe':
                             aq_query_result = aq.get_result(location)

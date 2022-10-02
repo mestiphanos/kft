@@ -18,16 +18,20 @@ class AthenaQuery:
     """ 
     Run athena queries
     """
-    def __init__(self,params,region_name = 'us-east-1',wait=True):
+    def __init__(self,params,region_name = 'us-east-1',wait=True,dry_run=False):
         """
         Initialize parameters 
         """
         try:
             self.params = params
             self.region = region_name
+            self.dry_run = dry_run
             self.initialize_client()
         except Exception as e:
-            logger.exception("Failed to initialize athena query parameters")
+            if self.dry_run:
+                logger.exception("Failed to initialize athena query parameters")
+            else:
+                raise Exception("Execution Failed")
         
     def initialize_client(self):
         """
@@ -38,7 +42,10 @@ class AthenaQuery:
             session = boto3.Session(region_name=self.region)
             self.client = session.client('athena')
         except Exception as e:
-            logger.exception("Failed to initialize athena client")
+            if self.dry_run:
+                logger.exception("Failed to initialize athena client")
+            else:
+                raise Exception("Execution Failed")
         
     def start_query(self,query=''):
         """
