@@ -30,11 +30,11 @@ def return_col_info(table_name):
     return f"DESCRIBE {table_name}"
 
 
-def runquery_decorator(query_generator,argument_passed = ''):
+def runquery_decorator(database_name,query_generator,argument_passed = ''):
     if argument_passed:
         query = query_generator(argument_passed)
     else:
         query = query_generator()
-    rq = RunAthenaQuery(query,"dataframe",**{'output_location':'table_info_query_results'})
+    rq = RunAthenaQuery(query,"dataframe",**{'output_location':'table_info_query_results','database':database_name})
     return rq.query_results()
         
