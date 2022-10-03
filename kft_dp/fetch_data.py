@@ -1,9 +1,17 @@
 from kft_dp.run_athena_query import *
 from kft_dp.logger import Logger
 from kft_dp.table_info import *
+import pandas as pd
 logger = Logger(__name__).log()
 
-class FetchData:
+def fetch_data_s3(path):
+    try:
+        return pd.read_csv(path)
+    except:
+        logger.error(f"Error reading the file {path}")
+
+
+class FetchDataAthena:
     def __init__(self,dry_run = False,cleaned=False,table_name='mse_data'):
         self.dry_run = dry_run
         self.cleaned = cleaned
@@ -13,6 +21,7 @@ class FetchData:
         self.return_partition_info()
         self.return_columns()
         self.return_table_info()
+        
 
         try:
             self.partitions = self.return_partition_info()
@@ -62,7 +71,7 @@ class FetchData:
         if self.cleaned:
             self.table_name += "_cleaned"
         logger.info("If you want to fetch cols from the table, you can choose from the following:")
-        logger.info(self.columns)
+        logger.info(self.column_info)
         logger.info("")
         query = "SELECT "
         selected_cols = "*"
