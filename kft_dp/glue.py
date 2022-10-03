@@ -13,7 +13,14 @@ class Glue:
         session = boto3.Session(region_name = 'eu-west-1')
         client = session.client('glue')
         return client
-        
+    
+    def get_table(self,table_name,database):
+        response = client.get_table(
+        DatabaseName=table_name,
+        Name=database_name,
+        )
+        return response
+    
     def wait_until_ready(self,crawler_name,abort_time = 600,retry_seconds=30) -> None:
         state_previous = None
         start = time.time()
