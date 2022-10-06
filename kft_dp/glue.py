@@ -4,13 +4,13 @@ import time
 logger = Logger(__name__).log()
 
 class Glue:
-    def __init__(self,dry_run,region_name='eu-west-1'):
+    def __init__(self,dry_run,region_name='us-east-1'):
         self.region = region_name
         self.dry_run = dry_run
         self.client = self.initialize()
 
     def initialize(self):
-        session = boto3.Session(region_name = 'eu-west-1')
+        session = boto3.Session(region_name = 'us-east-1')
         client = session.client('glue')
         return client
     
@@ -51,7 +51,7 @@ class Glue:
             logger.info(f"{self.time_taken}")
             logger.info(f"Crawled {crawler_name}.")
 
-    def get_partitions(self,tablename,database="adludio-etl-test",NextToken=""):
+    def get_partitions(self,tablename,database="",NextToken=""):
         # self.wait_until_ready()
         if NextToken:
             response_query_result = self.client.get_partitions(DatabaseName=database,
