@@ -38,6 +38,21 @@ class Glue:
                 logger.info(f"{self.time_taken}")
             time.sleep(retry_seconds)
 
+    
+    def get_databases(self):
+        return self.client.get_databases()
+
+    def return_table_info(self):
+        databases = [db_info["Name"] for db_info in self.get_databases()['DatabaseList'] if db_info['Name'] not in ['cse_table','default','mfs']]
+        tables =  {table_info['Name']:table_info for db in databases for table_info in self.get_tables(db)['TableList']}
+        return tables    
+        
+    def get_tables(self,database_name):
+        response = self.client.get_tables(
+        DatabaseName=database_name
+        )
+        return response
+
     def run_crawler(self,crawler_name):
         self.wait_until_ready(crawler_name)
         if self.dry_run:

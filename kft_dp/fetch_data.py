@@ -1,6 +1,7 @@
 from kft_dp.run_athena_query import *
 from kft_dp.logger import Logger
 from kft_dp.table_info import *
+from kft_dp.schema_registry import *
 import pandas as pd
 logger = Logger(__name__).log()
 
@@ -97,4 +98,23 @@ class FetchDataAthena:
         df = rq.query_results()
 
         return df
+
+
+def list_sources(stage=''):
+    return SchemaRegistry().return_sources()
+
+
+def get_source(stage,source_name):
+    if stage == 'stage_0':
+        path = list_sources(stage)[source_name]
+        if path:
+            return fetch_data_s3(path)
+    elif stage == 'stage_1':
+        sources = list_sources(stage)
+        print(sources)
+        print(source_name)
+
+        db_name = [key for key in sources[stage].keys() if source_name in sources[stage][key]][0]
+        return FetchDataAthena(table_name=source_name,database_name=db_name).run()
+
 
