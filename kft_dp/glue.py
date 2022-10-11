@@ -4,13 +4,13 @@ import time
 logger = Logger(__name__).log()
 
 class Glue:
-    def __init__(self,dry_run,region_name='eu-west-1'):
+    def __init__(self,dry_run,region_name='us-east-1'):
         self.region = region_name
         self.dry_run = dry_run
         self.client = self.initialize()
 
     def initialize(self):
-        session = boto3.Session(region_name = 'eu-west-1')
+        session = boto3.Session(region_name = 'us-east-1')
         client = session.client('glue')
         return client
     
@@ -38,6 +38,21 @@ class Glue:
                 logger.info(f"{self.time_taken}")
             time.sleep(retry_seconds)
 
+    
+    def get_databases(self):
+        return self.client.get_databases()
+
+    def return_table_info(self):
+        databases = [db_info["Name"] for db_info in self.get_databases()['DatabaseList'] if db_info['Name'] not in ['cse_table','default','mfs']]
+        tables =  {table_info['Name']:table_info for db in databases for table_info in self.get_tables(db)['TableList']}
+        return tables    
+        
+    def get_tables(self,database_name):
+        response = self.client.get_tables(
+        DatabaseName=database_name
+        )
+        return response
+
     def run_crawler(self,crawler_name):
         self.wait_until_ready(crawler_name)
         if self.dry_run:
@@ -51,7 +66,7 @@ class Glue:
             logger.info(f"{self.time_taken}")
             logger.info(f"Crawled {crawler_name}.")
 
-    def get_partitions(self,tablename,database="adludio-etl-test",NextToken=""):
+    def get_partitions(self,tablename,database="",NextToken=""):
         # self.wait_until_ready()
         if NextToken:
             response_query_result = self.client.get_partitions(DatabaseName=database,

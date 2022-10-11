@@ -2,13 +2,28 @@ from kft_dp.run_athena_query import *
 from kft_dp.logger import Logger
 from kft_dp.table_info import *
 import pandas as pd
+import s3fs
+
+
 logger = Logger(__name__).log()
 
+
 def fetch_data_s3(path):
-    try:
-        return pd.read_csv(path)
-    except:
-        logger.error(f"Error reading the file {path}")
+    if path.endswith(".csv"):
+        try:
+            return pd.read_csv(path)
+        except:
+            logger.error(f"Error reading the file {path}")
+    elif path.endswith("/"):
+        s3 = s3fs.S3FileSystem(anon=False)
+        files = s3.glob(f"{path}*.csv")
+        df_list = []
+        for file in files:
+            df = pd.read_csv(f"s3://{file}")
+            df["dataset_name"] = file.split("/")[-1].replace(".csv",'')
+            df_list.append(df)
+        df = pd.concat(df_list)
+        return df
 
 
 class FetchDataAthena:
@@ -97,4 +112,5 @@ class FetchDataAthena:
         df = rq.query_results()
 
         return df
+
 
