@@ -4,14 +4,15 @@ source_info = SchemaRegistry().return_sources()
 
 def list_sources(stage=''):
         """ Lists all the available sources we have on
-            the data lake in 'stage_0' and 'stage_1 :
+            the data lake in 'stage_0', 'stage_1' and 'stage_2' :
             Parameters
             ----------
             stage : string 
                 The stage the data sources reside in, which 
-                are currently either 'stage_0' or 'stage_1'
+                are currently in 'stage_0', 'stage_1' or 'stage_2'
                 'stage_0' : contains raw data
                 'stage_1' : contains cleaned data
+                'stage_2' : contains feature data
 
             Returns
             -------
@@ -78,7 +79,7 @@ def get_data(stage,source_name):
         df : DataFrame
             Data Fetched.
     """
-    if stage == 'stage_0':
+    if stage == 'stage_0' or 'stage_2':
         path = source_info[stage][source_name]['path']
         if path:
             df = fetch_data_s3(path)

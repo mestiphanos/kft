@@ -87,7 +87,7 @@ class SchemaRegistry(Glue):
 
     def return_sources(self,stage=''):
         sources = {'stage_0': self.list_schema_info(),
-                'stage_1': self.return_table_info()}
+                'stage_1': self.return_table_info(),'stage_2': self.list_schema_info()}
         if stage:
             return sources[stage]
         else:
