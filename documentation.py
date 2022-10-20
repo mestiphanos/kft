@@ -8,7 +8,6 @@ class doc:
     def __init__(self):
         print("class uploaded")
         
-
     
     def make_file(self, csv_file, description):
         """
@@ -27,7 +26,7 @@ class doc:
             sample1 = df._get_value(10, cols[i])
             sample2 = df._get_value(30, cols[i])
             ls.append({'name': cols[i], 'type':str(tpe), 'missing_values':float(missing_value_df.round(2).iloc[i]), 'description':cols[i],'ex_col_val':[str(sample1), str(sample2)],'Abnormal_values':''})
-        json_obj = 'doc.json'
+        json_obj = "/mnt/kft-lakehouse-staging/json_files/doc.json"
         with open(json_obj, 'r') as json_file:
             doc = json.load(json_file)
 
