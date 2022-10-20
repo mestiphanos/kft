@@ -15,7 +15,7 @@ class doc:
         creates a documentaion in a json format
         """
         ls = []
-        dataset_name = csv_file.split('/')[3]
+        dataset_name = csv_file.split('/')[-1]
         df = pd.read_csv(csv_file)
         cols =  df.columns.tolist()
         shape = df.shape
